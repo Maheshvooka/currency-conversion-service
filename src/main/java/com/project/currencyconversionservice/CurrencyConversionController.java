@@ -11,9 +11,12 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 public class CurrencyConversionController {
+
+    Logger logger = Logger.getLogger(CurrencyConversionController.class.getName());
     @Autowired
     CurrencyExchangeFeignProxy exchangeFeignProxy;
     @GetMapping("/currency/convert/from/{from}/to/{to}/amount/{amount}")
@@ -32,6 +35,7 @@ public class CurrencyConversionController {
     public CurrencyConversionBean getConversionWithFeign(@PathVariable("from") String from, @PathVariable("to") String to, @PathVariable("amount") int amount) {
         CurrencyConversionBean bean = exchangeFeignProxy.getRate(from,to);
         bean.setAmount(amount);
+        logger.info("check sleuth conversion service");
         bean.setConversionValue(bean.getConversionRate().multiply(BigDecimal.valueOf(bean.getAmount())));
         return bean;
     }
